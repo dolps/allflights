@@ -68,7 +68,7 @@ const ActivityDetail = () => {
             viewer.clock.stopTime = flightData.stop.clone();
             viewer.clock.currentTime = flightData.start.clone();
             viewer.clock.clockRange = Cesium.ClockRange.CLAMPED;
-            viewer.clock.multiplier = 10;
+            viewer.clock.multiplier = 20;
             viewer.clock.shouldAnimate = false; // Let user hit play
 
             // Fly to track with padding
@@ -87,6 +87,20 @@ const ActivityDetail = () => {
     }, [flightData]);
 
     if (!flight) return <div className="p-8 text-center">Flight not found</div>;
+
+    const [terrainProvider, setTerrainProvider] = useState(null);
+
+    useEffect(() => {
+        // Load terrain geometry
+        Cesium.createWorldTerrainAsync()
+            .then(tp => {
+                setTerrainProvider(tp);
+                if (viewerRef.current && viewerRef.current.cesiumElement) {
+                    viewerRef.current.cesiumElement.terrainProvider = tp;
+                }
+            })
+            .catch(err => console.log("Terrain loading error:", err));
+    }, []);
 
     return (
         <div className="activity-detail-page h-screen flex flex-col">
