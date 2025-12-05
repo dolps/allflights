@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Plane, User, Activity } from 'lucide-react';
+import { User, Activity } from 'lucide-react';
 import './Navbar.css';
 
 const Navbar = () => {
@@ -14,9 +14,11 @@ const Navbar = () => {
         <nav className="navbar">
             <div className="container nav-content">
                 <Link to="/" className="logo">
-                    <Plane className="logo-icon" size={24} />
                     <span className="logo-text">AllFlights</span>
                 </Link>
+                <span className="bg-gradient-to-b from-retro-blue via-white to-retro-purple bg-clip-text text-transparent transform skew-x-[-10deg]">
+                    ALLFLIGHTS
+                </span>
                 <div className="nav-links">
                     <Link to="/" className={isActive('/')}>
                         <Activity size={20} />

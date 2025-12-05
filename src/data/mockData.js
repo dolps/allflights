@@ -23,7 +23,7 @@ export const flights = [
         distance: 25.4, // km
         maxAltitude: 2100, // meters
         description: 'Great conditions, lift everywhere.',
-        gpx: null, // Placeholder
+        gpx: '/src/data/fly.gpx',
     },
     {
         id: 'f2',
@@ -35,7 +35,7 @@ export const flights = [
         distance: 3.2, // km
         maxAltitude: 1800, // meters
         description: 'Sketchy launch but smooth flight.',
-        gpx: null,
+        gpx: '/src/data/hikeandfly.gpx',
     },
     {
         id: 'f3',

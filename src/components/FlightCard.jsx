@@ -1,9 +1,11 @@
 import React from 'react';
-import { Clock, Navigation, Mountain, Heart, MessageSquare, Share2 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Clock, Navigation, Mountain, Heart, MessageSquare, Share2, Map } from 'lucide-react';
 import { getPilot } from '../data/mockData';
 import './FlightCard.css';
 
 const FlightCard = ({ flight }) => {
+    const navigate = useNavigate();
     const pilot = getPilot(flight.pilotId);
 
     const formatDuration = (seconds) => {
@@ -50,8 +52,16 @@ const FlightCard = ({ flight }) => {
                 </div>
 
                 {/* Map Placeholder */}
-                <div className="map-placeholder">
-                    <span>Map Visualization Coming Soon</span>
+                {/* Map Preview Link */}
+                <div
+                    className="map-placeholder clickable"
+                    onClick={() => navigate(`/activity/${flight.id}`)}
+                    title="View 3D Flight Track"
+                >
+                    <div className="map-overlay-content">
+                        <Map size={32} />
+                        <span>View 3D Track</span>
+                    </div>
                 </div>
             </div>
 
