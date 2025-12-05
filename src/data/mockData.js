@@ -24,6 +24,8 @@ export const flights = [
         maxAltitude: 2100, // meters
         description: 'Great conditions, lift everywhere.',
         gpx: '/src/data/fly.gpx',
+        startLat: 60.053088,
+        startLon: 10.321986
     },
     {
         id: 'f2',
@@ -36,6 +38,8 @@ export const flights = [
         maxAltitude: 1800, // meters
         description: 'Sketchy launch but smooth flight.',
         gpx: '/src/data/hikeandfly.gpx',
+        startLat: 60.055831,
+        startLon: 10.317951
     },
     {
         id: 'f3',

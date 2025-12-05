@@ -1,8 +1,11 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { MapContainer, TileLayer } from 'react-leaflet';
+import 'leaflet/dist/leaflet.css';
 import { Clock, Navigation, Mountain, Heart, MessageSquare, Share2, Map } from 'lucide-react';
 import { getPilot } from '../data/mockData';
 import './FlightCard.css';
+import Leaflet from './Leaflet';
 
 const FlightCard = ({ flight }) => {
     const navigate = useNavigate();
@@ -21,6 +24,10 @@ const FlightCard = ({ flight }) => {
         const options = { month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
         return new Date(dateString).toLocaleDateString(undefined, options);
     };
+
+    const mapAttributes = {
+        startPosition: [flight.startLat, flight.startLon]
+    }
 
     return (
         <div className="flight-card">
@@ -51,17 +58,24 @@ const FlightCard = ({ flight }) => {
                     </div>
                 </div>
 
-                {/* Map Placeholder */}
-                {/* Map Preview Link */}
+                {/* Map Preview */}
                 <div
                     className="map-placeholder clickable"
                     onClick={() => navigate(`/activity/${flight.id}`)}
                     title="View 3D Flight Track"
+                    style={{ position: 'relative', height: '200px', width: '100%', overflow: 'hidden' }}
                 >
-                    <div className="map-overlay-content">
-                        <Map size={32} />
-                        <span>View 3D Track</span>
-                    </div>
+                    {flight.gpx &&
+                        <>
+                            <Leaflet mapAttributes={mapAttributes}
+
+
+                            />
+                            <div className="map-overlay-content">
+                                <Map size={32} />
+                                <span>View 3D Track</span>
+                            </div></>
+                    }
                 </div>
             </div>
 
@@ -70,7 +84,7 @@ const FlightCard = ({ flight }) => {
                 <button className="action-btn"><MessageSquare size={18} /></button>
                 <button className="action-btn"><Share2 size={18} /></button>
             </div>
-        </div>
+        </div >
     );
 };
 

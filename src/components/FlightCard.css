@@ -81,10 +81,23 @@
     justify-content: center;
     color: var(--text-muted);
     font-size: 0.9rem;
-    border: 1px dashed var(--border);
+    border: none;
     transition: all 0.2s;
-    background-image: linear-gradient(45deg, var(--bg-card) 25%, var(--bg) 25%, var(--bg) 50%, var(--bg-card) 50%, var(--bg-card) 75%, var(--bg) 75%, var(--bg) 100%);
-    background-size: 20px 20px;
+    overflow: hidden;
+    /* Ensure map doesn't overflow corners */
+}
+
+/* Force map to fill the space absolutely behind the content */
+.map-placeholder .leaflet-container {
+    padding: 0;
+    margin: 0;
+    position: absolute !important;
+    top: 0;
+    left: 0;
+    width: 100% !important;
+    height: 100% !important;
+    background: transparent !important;
+    z-index: 1;
 }
 
 .map-placeholder.clickable {
@@ -97,7 +110,11 @@
     box-shadow: 0 0 0 2px rgba(252, 76, 2, 0.2);
 }
 
+/* Ensure overlay stays on top but follows flex centering */
 .map-overlay-content {
+    position: relative;
+    /* Let flexbox center it */
+    z-index: 10;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -107,6 +124,7 @@
     border-radius: 99px;
     border: 1px solid var(--border);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    pointer-events: none;
 }
 
 .card-footer {
