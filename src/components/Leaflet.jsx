@@ -2,10 +2,8 @@ import { MapContainer, Marker, Popup, TileLayer } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 
 const Leaflet = ({ mapAttributes }) => {
-    console.log('mapattributes:: ', JSON.stringify(mapAttributes))
-    const position = [51.505, -0.09]
     return (
-        <MapContainer center={position} zoom={12} scrollWheelZoom={false} zoomControl={false}
+        <MapContainer center={mapAttributes.startPosition} zoom={12} scrollWheelZoom={false} zoomControl={false}
             dragging={false}
             doubleClickZoom={false}
             attributionControl={false}>
