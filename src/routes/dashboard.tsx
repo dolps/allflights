@@ -1,5 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { Activity, Clock, MapPin, Wind, TrendingUp, Users } from 'lucide-react'
+import { Activity, Clock, MapPin, Wind, TrendingUp, Users, Trophy, Award, Timer, Mountain, Zap } from 'lucide-react'
 
 export const Route = createFileRoute('/dashboard')({
   component: Dashboard,
@@ -40,6 +40,15 @@ const mockActivities = [
     avatar: 'https://i.pravatar.cc/150?u=marco',
   },
 ]
+
+const topStats = {
+  totalHours: '142h',
+  totalFlights: 312,
+  longestDistance: '84.2 km',
+  longestTime: '5h 22m',
+  maxHeight: '4,204m',
+  maxLift: '+6.4 m/s'
+}
 
 function Dashboard() {
   return (
@@ -137,6 +146,54 @@ function Dashboard() {
                 </button>
               </div>
               <Wind className="absolute bottom-[-20px] right-[-20px] w-32 h-32 text-white/10 -rotate-12 group-hover:scale-110 transition-transform duration-700" />
+            </div>
+
+            <div className="bg-slate-900/40 backdrop-blur-xl border border-slate-800/60 rounded-3xl p-6">
+              <h3 className="font-bold text-lg mb-6 flex items-center gap-2">
+                <Trophy className="w-5 h-5 text-amber-400" />
+                Personal Bests
+              </h3>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="bg-slate-800/40 rounded-2xl p-4 border border-slate-700/30">
+                  <div className="text-slate-400 text-[10px] font-bold uppercase tracking-widest mb-1">Total Time</div>
+                  <div className="text-xl font-black text-white">{topStats.totalHours}</div>
+                </div>
+                <div className="bg-slate-800/40 rounded-2xl p-4 border border-slate-700/30">
+                  <div className="text-slate-400 text-[10px] font-bold uppercase tracking-widest mb-1">Flights</div>
+                  <div className="text-xl font-black text-white">{topStats.totalFlights}</div>
+                </div>
+                <div className="col-span-2 bg-slate-800/40 rounded-2xl p-4 border border-slate-700/30 relative overflow-hidden group/stat">
+                  <div className="flex items-center gap-3 relative z-10">
+                    <Award className="w-8 h-8 text-cyan-400" />
+                    <div>
+                      <div className="text-slate-400 text-[10px] font-bold uppercase tracking-widest">Longest Distance</div>
+                      <div className="text-2xl font-black text-white">{topStats.longestDistance}</div>
+                    </div>
+                  </div>
+                  <MapPin className="absolute right-[-10px] bottom-[-10px] w-16 h-16 text-white/5 -rotate-12" />
+                </div>
+                <div className="bg-slate-800/40 rounded-2xl p-4 border border-slate-700/30">
+                  <div className="flex items-center gap-1 text-slate-400 text-[10px] font-bold uppercase tracking-widest mb-1">
+                    <Timer className="w-3 h-3 text-emerald-400" />
+                    Duration
+                  </div>
+                  <div className="text-lg font-black text-white">{topStats.longestTime}</div>
+                </div>
+                <div className="bg-slate-800/40 rounded-2xl p-4 border border-slate-700/30">
+                  <div className="flex items-center gap-1 text-slate-400 text-[10px] font-bold uppercase tracking-widest mb-1">
+                    <Mountain className="w-3 h-3 text-blue-400" />
+                    Height
+                  </div>
+                  <div className="text-lg font-black text-white">{topStats.maxHeight}</div>
+                </div>
+                <div className="col-span-2 bg-slate-800/40 rounded-2xl p-4 border border-slate-700/30 flex items-center justify-between">
+                  <div>
+                    <div className="text-slate-400 text-[10px] font-bold uppercase tracking-widest">Max Lift</div>
+                    <div className="text-xl font-black text-white">{topStats.maxLift}</div>
+                  </div>
+                  <Zap className="w-6 h-6 text-yellow-400 fill-yellow-400/20" />
+                </div>
+              </div>
             </div>
 
             <div className="bg-slate-900/40 backdrop-blur-xl border border-slate-800/60 rounded-3xl p-6">
