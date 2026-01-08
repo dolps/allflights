@@ -6,10 +6,13 @@ export const Route = createFileRoute('/profile')({
 })
 
 const monthlyStats = [
-    { month: 'August', hours: 42, flights: 24, bestGlide: 9.2 },
-    { month: 'September', hours: 38, flights: 18, bestGlide: 8.9 },
-    { month: 'October', hours: 15, flights: 8, bestGlide: 8.1 },
-    { month: 'November', hours: 5, flights: 2, bestGlide: 7.5 },
+    { month: 'May', hours: 12, flights: 28, bestGlide: 8.4 },
+    { month: 'June', hours: 22, flights: 45, bestGlide: 8.8 },
+    { month: 'July', hours: 35, flights: 68, bestGlide: 9.5 },
+    { month: 'August', hours: 28, flights: 54, bestGlide: 9.2 },
+    { month: 'September', hours: 25, flights: 62, bestGlide: 8.9 },
+    { month: 'October', hours: 15, flights: 42, bestGlide: 8.1 },
+    { month: 'November', hours: 5.5, flights: 13, bestGlide: 7.5 },
 ]
 
 function Profile() {
@@ -31,7 +34,7 @@ function Profile() {
                     <div className="absolute -bottom-10 left-10 flex items-end gap-6">
                         <div className="w-32 h-32 rounded-3xl border-4 border-slate-950 overflow-hidden shadow-2xl relative">
                             <img
-                                src="https://i.pravatar.cc/300?u=current-user"
+                                src="/alex_stoked.png"
                                 alt="Profile"
                                 className="w-full h-full object-cover"
                             />
@@ -39,7 +42,7 @@ function Profile() {
                         <div className="mb-2">
                             <h2 className="text-3xl font-black text-white">Alex "The Eagle" Smith</h2>
                             <div className="flex items-center gap-3 text-cyan-400 font-medium mt-1">
-                                <span className="flex items-center gap-1"><MapPin size={14} /> Voss, Norway</span>
+                                <span className="flex items-center gap-1"><MapPin size={14} /> Swiss Alps</span>
                                 <span className="w-1.5 h-1.5 rounded-full bg-slate-800" />
                                 <span className="text-slate-400">Member since May 2024</span>
                             </div>
@@ -84,28 +87,48 @@ function Profile() {
                                     <Calendar size={20} className="text-blue-400" />
                                     Monthly Comparison
                                 </h3>
-                                <div className="flex gap-2 text-xs font-bold uppercase text-slate-500 tracking-widest leading-none items-center">
-                                    <div className="w-3 h-3 rounded bg-cyan-500" /> 2024 Season
+                                <div className="flex gap-4 text-[10px] font-bold uppercase text-slate-500 tracking-widest leading-none items-center">
+                                    <div className="flex items-center gap-1.5">
+                                        <div className="w-2 h-2 rounded-full bg-cyan-500" /> Hours
+                                    </div>
+                                    <div className="flex items-center gap-1.5">
+                                        <div className="w-2 h-2 rounded-full bg-indigo-500" /> Flights
+                                    </div>
+                                    <span className="text-slate-700">|</span>
+                                    <span>2025 Season</span>
                                 </div>
                             </div>
 
                             <div className="bg-slate-900/40 backdrop-blur-xl border border-slate-800/60 rounded-3xl p-8">
-                                <div className="flex items-end justify-between h-48 gap-4 px-4">
-                                    {monthlyStats.map((stat, i) => (
-                                        <div key={i} className="flex-1 flex flex-col items-center gap-4 group">
-                                            <div className="relative w-full flex justify-center items-end h-full">
-                                                <div
-                                                    className="w-full max-w-[40px] bg-gradient-to-t from-blue-600 to-cyan-400 rounded-t-xl transition-all duration-1000 group-hover:from-blue-500 group-hover:to-cyan-300 relative"
-                                                    style={{ height: `${(stat.hours / maxHours) * 100}%` }}
-                                                >
-                                                    <div className="absolute -top-8 left-1/2 -translate-x-1/2 text-xs font-black text-white opacity-0 group-hover:opacity-100 transition-opacity">
-                                                        {stat.hours}h
+                                <div className="flex items-end justify-between h-64 gap-2 md:gap-4 px-2 border-b border-slate-800/50 pb-2">
+                                    {monthlyStats.map((stat, i) => {
+                                        const maxFlights = Math.max(...monthlyStats.map(s => s.flights))
+                                        return (
+                                            <div key={i} className="flex-1 h-full flex flex-col justify-end gap-4 group">
+                                                <div className="relative w-full flex-1 flex justify-center items-end gap-1 px-1">
+                                                    {/* Hours Bar */}
+                                                    <div
+                                                        className="w-full max-w-[12px] bg-gradient-to-t from-cyan-600 to-cyan-400 rounded-t-lg transition-all duration-700 group-hover:from-cyan-500 group-hover:to-cyan-300 relative shadow-[0_0_20px_rgba(34,211,238,0.15)]"
+                                                        style={{ height: `${(stat.hours / maxHours) * 100}%` }}
+                                                    >
+                                                        <div className="absolute -top-7 left-1/2 -translate-x-1/2 text-[9px] font-black text-cyan-400 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                                                            {stat.hours}h
+                                                        </div>
+                                                    </div>
+                                                    {/* Flights Bar */}
+                                                    <div
+                                                        className="w-full max-w-[12px] bg-gradient-to-t from-indigo-600 to-indigo-400 rounded-t-lg transition-all duration-700 group-hover:from-indigo-500 group-hover:to-indigo-300 relative shadow-[0_0_20px_rgba(79,70,229,0.15)]"
+                                                        style={{ height: `${(stat.flights / maxFlights) * 100}%` }}
+                                                    >
+                                                        <div className="absolute -top-7 left-1/2 -translate-x-1/2 text-[9px] font-black text-indigo-400 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                                                            {stat.flights}
+                                                        </div>
                                                     </div>
                                                 </div>
+                                                <span className="text-[10px] font-bold text-slate-500 uppercase tracking-tighter text-center">{stat.month.substring(0, 3)}</span>
                                             </div>
-                                            <span className="text-xs font-bold text-slate-500 uppercase tracking-tighter">{stat.month.substring(0, 3)}</span>
-                                        </div>
-                                    ))}
+                                        )
+                                    })}
                                 </div>
 
                                 <div className="mt-12 space-y-4">
@@ -115,8 +138,8 @@ function Profile() {
                                                 <TrendingUp size={18} />
                                             </div>
                                             <div>
-                                                <p className="text-xs font-bold text-slate-500 uppercase tracking-widest">Growth</p>
-                                                <p className="text-sm font-black text-white">August was your most active month (+10%)</p>
+                                                <p className="text-xs font-bold text-slate-500 uppercase tracking-widest">Efficiency Insight</p>
+                                                <p className="text-sm font-black text-white">July was your most productive month with 68 flights!</p>
                                             </div>
                                         </div>
                                         <ArrowRight size={18} className="text-slate-600" />

@@ -51,7 +51,7 @@ export default function Header() {
           >
             <div className="w-10 h-10 rounded-full border-2 border-slate-700 overflow-hidden ring-2 ring-transparent group-hover:ring-cyan-500/30 transition-all">
               <img
-                src="https://i.pravatar.cc/150?u=current-user"
+                src="/alex_stoked.png"
                 alt="Profile"
                 className="w-full h-full object-cover"
               />
