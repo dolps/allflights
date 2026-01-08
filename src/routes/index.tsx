@@ -4,12 +4,10 @@ import { HikeAndFlyIcon } from '@/svg/Hikeandfly'
 import { ParaglidingIcon } from '@/svg/ParaglidingIcon'
 import { SailplaneIcon } from '@/svg/SailplaneIcon'
 import { SpeedridingIcon } from '@/svg/SpeedridingIcon'
-import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import { createFileRoute } from '@tanstack/react-router'
 import {
 } from 'lucide-react'
 import ReactCountryFlag from "react-country-flag";
-
-import { useEffect } from 'react'
 
 export const Route = createFileRoute('/')({ component: App })
 
@@ -59,8 +57,6 @@ const features = [
 ]
 
 function App() {
-  const navigate = useNavigate();
-
   const handleGithubLogin = async () => {
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: 'github',

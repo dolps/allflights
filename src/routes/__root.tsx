@@ -37,12 +37,31 @@ function RootDocument({ children }: { children: React.ReactNode }) {
   const navigate = useNavigate();
 
   useEffect(() => {
-    supabase.auth.onAuthStateChange((event, session) => {
-      console.log('Root Auth Event:', event, session ? 'Session found' : 'No session');
-      if (session && (window.location.pathname === '/' || window.location.pathname === '/login')) {
-        navigate({ to: '/dashboard' });
+    // 1. Proactive cleanup for the hash token immediately on mount
+    // Supabase can sometimes leave the hash even after the session is established.
+    const purgeAuthHash = () => {
+      if (window.location.hash.includes('access_token')) {
+        console.log('Purging auth hash from URL');
+        const newUrl = window.location.pathname + window.location.search;
+        window.history.replaceState(null, '', newUrl);
+      }
+    };
+
+    purgeAuthHash();
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session) {
+        // 2. Secondary cleanup within the listener to handle race conditions
+        purgeAuthHash();
+
+        // Redirect from landing pages to dashboard if logged in
+        if (window.location.pathname === '/' || window.location.pathname === '/login') {
+          navigate({ to: '/dashboard', replace: true });
+        }
       }
     });
+
+    return () => subscription.unsubscribe();
   }, [navigate]);
 
   return (
