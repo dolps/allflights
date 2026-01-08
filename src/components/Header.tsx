@@ -1,23 +1,50 @@
-import { Link } from '@tanstack/react-router'
-
-import { useState } from 'react'
+import { Link, useNavigate } from '@tanstack/react-router'
+import { supabase } from '../lib/supabase'
+import { useEffect, useState } from 'react'
 import {
   ChevronDown,
   ChevronRight,
   Home,
+  LayoutDashboard,
   Menu,
   Network,
   SquareFunction,
   StickyNote,
+  User,
   X,
 } from 'lucide-react'
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false)
   const [profileOpen, setProfileOpen] = useState(false)
+  const [user, setUser] = useState<any>(null)
+  const navigate = useNavigate()
   const [groupedExpanded, setGroupedExpanded] = useState<
     Record<string, boolean>
   >({})
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null)
+    })
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null)
+    })
+
+    return () => subscription.unsubscribe()
+  }, [])
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut()
+    setProfileOpen(false)
+    navigate({ to: '/', replace: true })
+  }
+
+  const avatarUrl = user?.user_metadata?.avatar_url || '/alex_stoked.png'
+  const fullName = user?.user_metadata?.full_name || 'Pilot'
+  const githubHandle = user?.user_metadata?.user_name
+  const displayName = fullName || (githubHandle ? `@${githubHandle}` : 'Pilot')
 
   return (
     <>
@@ -51,7 +78,7 @@ export default function Header() {
           >
             <div className="w-10 h-10 rounded-full border-2 border-slate-700 overflow-hidden ring-2 ring-transparent group-hover:ring-cyan-500/30 transition-all">
               <img
-                src="/alex_stoked.png"
+                src={avatarUrl}
                 alt="Profile"
                 className="w-full h-full object-cover"
               />
@@ -67,12 +94,21 @@ export default function Header() {
                 className="flex items-center gap-3 px-4 py-3 text-sm font-medium hover:bg-slate-800 transition-colors"
               >
                 <div className="w-8 h-8 rounded-full bg-cyan-500/10 flex items-center justify-center text-cyan-400">
-                  <Home size={16} />
+                  <User size={16} />
                 </div>
-                My Profile
+                <div className="flex flex-col">
+                  <span className="text-white truncate max-w-[120px] font-bold">{displayName}</span>
+                  {githubHandle && (
+                    <span className="text-[10px] text-cyan-400 font-mono">@{githubHandle}</span>
+                  )}
+                  <span className="text-[10px] text-slate-500 mt-1 flex items-center gap-1">
+                    View Profile <ChevronRight size={10} />
+                  </span>
+                </div>
               </Link>
               <div className="h-px bg-slate-800 my-1 mx-4" />
               <button
+                onClick={handleLogout}
                 className="w-full flex items-center gap-3 px-4 py-3 text-sm font-medium text-rose-400 hover:bg-rose-500/10 transition-colors"
               >
                 <div className="w-8 h-8 rounded-full bg-rose-500/10 flex items-center justify-center">
@@ -102,7 +138,7 @@ export default function Header() {
 
         <nav className="flex-1 p-4 overflow-y-auto">
           <Link
-            to="/"
+            to={user ? "/dashboard" : "/"}
             onClick={() => setIsOpen(false)}
             className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800 transition-colors mb-2"
             activeProps={{
@@ -110,9 +146,24 @@ export default function Header() {
                 'flex items-center gap-3 p-3 rounded-lg bg-cyan-600 hover:bg-cyan-700 transition-colors mb-2',
             }}
           >
-            <Home size={20} />
-            <span className="font-medium">Home</span>
+            {user ? <LayoutDashboard size={20} /> : <Home size={20} />}
+            <span className="font-medium">{user ? "Dashboard" : "Home"}</span>
           </Link>
+
+          {user && (
+            <Link
+              to="/profile"
+              onClick={() => setIsOpen(false)}
+              className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800 transition-colors mb-2"
+              activeProps={{
+                className:
+                  'flex items-center gap-3 p-3 rounded-lg bg-cyan-600 hover:bg-cyan-700 transition-colors mb-2',
+              }}
+            >
+              <User size={20} />
+              <span className="font-medium">My Profile</span>
+            </Link>
+          )}
 
           {/* Demo Links Start */}
 

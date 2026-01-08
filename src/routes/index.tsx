@@ -1,12 +1,11 @@
-import { supabase } from '@/lib/supabase'
-import { HangGlidingIcon } from '@/svg/HangglidingIcon'
-import { HikeAndFlyIcon } from '@/svg/Hikeandfly'
-import { ParaglidingIcon } from '@/svg/ParaglidingIcon'
-import { SailplaneIcon } from '@/svg/SailplaneIcon'
-import { SpeedridingIcon } from '@/svg/SpeedridingIcon'
-import { createFileRoute } from '@tanstack/react-router'
-import {
-} from 'lucide-react'
+import { supabase } from '../lib/supabase'
+import { HangGlidingIcon } from '../svg/HangglidingIcon'
+import { HikeAndFlyIcon } from '../svg/Hikeandfly'
+import { ParaglidingIcon } from '../svg/ParaglidingIcon'
+import { SailplaneIcon } from '../svg/SailplaneIcon'
+import { SpeedridingIcon } from '../svg/SpeedridingIcon'
+import { createFileRoute, Link } from '@tanstack/react-router'
+import { useEffect, useState } from 'react'
 import ReactCountryFlag from "react-country-flag";
 
 export const Route = createFileRoute('/')({ component: App })
@@ -57,6 +56,14 @@ const features = [
 ]
 
 function App() {
+  const [user, setUser] = useState<any>(null)
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null)
+    })
+  }, [])
+
   const handleGithubLogin = async () => {
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: 'github',
@@ -104,23 +111,26 @@ function App() {
           </p>
 
           <div className="flex flex-col items-center gap-4">
-            <a
-              href="https://tanstack.com/start"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="px-8 py-3 bg-cyan-500 hover:bg-cyan-600 text-white font-semibold rounded-lg transition-colors shadow-lg shadow-cyan-500/50"
-            >
-              Signin
-            </a>
-            <button
-              onClick={handleGithubLogin}
-              className="px-6 py-2 bg-black text-white rounded hover:bg-gray-800"
-            >
-              Login with GitHub
-            </button>
-            <p className="text-lg text-gray-400 max-w-3xl mx-auto mb-8">
-              Join now to join the greatest flying community of all time
-            </p>
+            {user ? (
+              <Link
+                to="/dashboard"
+                className="px-8 py-4 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-black rounded-2xl transition-all shadow-xl shadow-cyan-500/25 scale-110"
+              >
+                Go to Dashboard
+              </Link>
+            ) : (
+              <>
+                <button
+                  onClick={handleGithubLogin}
+                  className="px-8 py-3 bg-cyan-500 hover:bg-cyan-600 text-white font-semibold rounded-lg transition-colors shadow-lg shadow-cyan-500/50"
+                >
+                  Signin with GitHub
+                </button>
+                <p className="text-lg text-gray-400 max-w-3xl mx-auto mb-8">
+                  Join now to join the greatest flying community of all time
+                </p>
+              </>
+            )}
           </div>
         </div>
       </section>

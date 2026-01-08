@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx version="1.1" creator="ALLFLIGHTS Sample" xmlns="http://www.topografix.com/GPX/1/1">
+  <trk>
+    <name>Morning Flight at Voss</name>
+    <trkseg>
+      <trkpt lat="60.6289" lon="6.4122">
+        <ele>820</ele>
+        <time>2026-01-08T09:00:00Z</time>
+      </trkpt>
+      <trkpt lat="60.6295" lon="6.4130">
+        <ele>950</ele>
+        <time>2026-01-08T09:05:00Z</time>
+      </trkpt>
+      <trkpt lat="60.6310" lon="6.4150">
+        <ele>1120</ele>
+        <time>2026-01-08T09:10:00Z</time>
+      </trkpt>
+      <trkpt lat="60.6300" lon="6.4140">
+        <ele>1050</ele>
+        <time>2026-01-08T09:15:00Z</time>
+      </trkpt>
+      <trkpt lat="60.6280" lon="6.4110">
+        <ele>800</ele>
+        <time>2026-01-08T09:20:00Z</time>
+      </trkpt>
+    </trkseg>
+  </trk>
+</gpx>

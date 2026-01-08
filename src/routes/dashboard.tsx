@@ -1,5 +1,8 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, Link } from '@tanstack/react-router'
 import { Activity, Clock, MapPin, Wind, TrendingUp, Users, Trophy, Award, Timer, Mountain, Zap } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { UploadModal } from '../components/UploadModal'
+import { supabase } from '../lib/supabase'
 
 export const Route = createFileRoute('/dashboard')({
   component: Dashboard,
@@ -51,6 +54,25 @@ const topStats = {
 }
 
 function Dashboard() {
+  const [isUploadModalOpen, setIsUploadModalOpen] = useState(false)
+  const [user, setUser] = useState<any>(null)
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null)
+    })
+  }, [])
+
+  const avatarUrl = user?.user_metadata?.avatar_url || '/alex_stoked.png'
+  const userName = user?.user_metadata?.full_name || user?.user_metadata?.user_name || 'Alex "The Eagle" Smith'
+
+  const personalizedActivities = mockActivities.map(activity => {
+    if (activity.id === 1) {
+      return { ...activity, user: userName, avatar: avatarUrl }
+    }
+    return activity
+  })
+
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 p-6 md:p-10 font-sans selection:bg-cyan-500/30">
       <div className="max-w-6xl mx-auto">
@@ -72,7 +94,7 @@ function Dashboard() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Feed */}
           <div className="lg:col-span-2 space-y-8">
-            {mockActivities.map((activity) => (
+            {personalizedActivities.map((activity) => (
               <div
                 key={activity.id}
                 className="group bg-slate-900/40 backdrop-blur-xl border border-slate-800/60 rounded-3xl overflow-hidden hover:border-cyan-500/30 transition-all duration-500 shadow-2xl hover:shadow-cyan-500/10"
@@ -97,11 +119,15 @@ function Dashboard() {
                 <div className="p-6">
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex items-center gap-4">
-                      <img src={activity.avatar} alt={activity.user} className="w-12 h-12 rounded-full border-2 border-slate-800 ring-4 ring-cyan-500/5" />
+                      <Link to="/profile" className="block shrink-0">
+                        <img src={activity.avatar} alt={activity.user} className="w-12 h-12 rounded-full border-2 border-slate-800 ring-4 ring-cyan-500/5 hover:ring-cyan-400/30 transition-all" />
+                      </Link>
                       <div>
-                        <h3 className="font-bold text-lg leading-tight group-hover:text-cyan-400 transition-colors">
-                          {activity.user}
-                        </h3>
+                        <Link to="/profile" className="hover:text-cyan-400 transition-colors">
+                          <h3 className="font-bold text-lg leading-tight">
+                            {activity.user}
+                          </h3>
+                        </Link>
                         <div className="flex items-center gap-2 text-slate-500 text-sm mt-1">
                           <MapPin className="w-3.5 h-3.5" />
                           {activity.location}
@@ -141,7 +167,10 @@ function Dashboard() {
               <div className="relative z-10">
                 <h3 className="text-2xl font-black mb-2">Ready to fly?</h3>
                 <p className="text-cyan-100/80 mb-6 text-sm">Upload your latest flight data and see how you stack up.</p>
-                <button className="w-full py-4 bg-white text-blue-700 font-bold rounded-2xl hover:bg-cyan-50 transition-colors shadow-lg shadow-blue-900/20">
+                <button
+                  onClick={() => setIsUploadModalOpen(true)}
+                  className="w-full py-4 bg-white text-blue-700 font-bold rounded-2xl hover:bg-cyan-50 transition-colors shadow-lg shadow-blue-900/20"
+                >
                   Upload Activity
                 </button>
               </div>
@@ -220,6 +249,15 @@ function Dashboard() {
           </div>
         </div>
       </div>
+
+      <UploadModal
+        isOpen={isUploadModalOpen}
+        onClose={() => setIsUploadModalOpen(false)}
+        onSuccess={() => {
+          // TODO: Refresh activities feed
+          console.log('Activity uploaded successfully!')
+        }}
+      />
     </div>
   )
 }

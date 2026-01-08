@@ -1,5 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { Award, Clock, Calendar, TrendingUp, MapPin, Wind, User, Settings, ArrowRight } from 'lucide-react'
+import { Award, Clock, Calendar, TrendingUp, MapPin, Wind, Settings, ArrowRight, Github } from 'lucide-react'
+import { supabase } from '../lib/supabase'
+import { useEffect, useState } from 'react'
 
 export const Route = createFileRoute('/profile')({
     component: Profile,
@@ -16,7 +18,19 @@ const monthlyStats = [
 ]
 
 function Profile() {
+    const [user, setUser] = useState<any>(null)
     const maxHours = Math.max(...monthlyStats.map(s => s.hours))
+
+    useEffect(() => {
+        supabase.auth.getSession().then(({ data: { session } }) => {
+            setUser(session?.user ?? null)
+        })
+    }, [])
+
+    const avatarUrl = user?.user_metadata?.avatar_url || '/alex_stoked.png'
+    const fullName = user?.user_metadata?.full_name || 'Pilot'
+    const githubHandle = user?.user_metadata?.user_name
+    const memberSince = user?.created_at ? new Date(user.created_at).toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) : 'May 2024'
 
     return (
         <div className="min-h-screen bg-slate-950 text-slate-100 p-6 md:p-10 font-sans selection:bg-cyan-500/30">
@@ -32,19 +46,32 @@ function Profile() {
                         </div>
                     </div>
                     <div className="absolute -bottom-10 left-10 flex items-end gap-6">
-                        <div className="w-32 h-32 rounded-3xl border-4 border-slate-950 overflow-hidden shadow-2xl relative">
+                        <div className="w-32 h-32 rounded-3xl border-4 border-slate-950 overflow-hidden shadow-2xl relative bg-slate-800">
                             <img
-                                src="/alex_stoked.png"
+                                src={avatarUrl}
                                 alt="Profile"
                                 className="w-full h-full object-cover"
                             />
                         </div>
                         <div className="mb-2">
-                            <h2 className="text-3xl font-black text-white">Alex "The Eagle" Smith</h2>
-                            <div className="flex items-center gap-3 text-cyan-400 font-medium mt-1">
-                                <span className="flex items-center gap-1"><MapPin size={14} /> Swiss Alps</span>
-                                <span className="w-1.5 h-1.5 rounded-full bg-slate-800" />
-                                <span className="text-slate-400">Member since May 2024</span>
+                            <h2 className="text-3xl font-black text-white">{fullName}</h2>
+                            <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-4 mt-1">
+                                <div className="flex items-center gap-3 text-cyan-400 font-medium">
+                                    <span className="flex items-center gap-1"><MapPin size={14} /> Swiss Alps</span>
+                                    <span className="w-1.5 h-1.5 rounded-full bg-slate-800" />
+                                    <span className="text-slate-400">Member since {memberSince}</span>
+                                </div>
+                                {githubHandle && (
+                                    <a
+                                        href={`https://github.com/${githubHandle}`}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="flex items-center gap-1.5 text-xs font-bold text-slate-400 hover:text-white transition-colors bg-white/5 px-2 py-1 rounded-lg border border-white/10"
+                                    >
+                                        <Github size={12} />
+                                        @{githubHandle}
+                                    </a>
+                                )}
                             </div>
                         </div>
                     </div>
