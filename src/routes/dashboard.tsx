@@ -14,7 +14,7 @@ const mockActivities = [
     duration: '2h 15m',
     altitude: '1,200m',
     timestamp: '2 hours ago',
-    image: 'https://images.unsplash.com/photo-1544625570-072007889e24?q=80&w=800&auto=format&fit=crop',
+    image: '/alex_eagle_flight.png',
     avatar: 'https://i.pravatar.cc/150?u=alex',
   },
   {
