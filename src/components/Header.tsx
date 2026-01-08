@@ -14,32 +14,75 @@ import {
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false)
+  const [profileOpen, setProfileOpen] = useState(false)
   const [groupedExpanded, setGroupedExpanded] = useState<
     Record<string, boolean>
   >({})
 
   return (
     <>
-      <header className="p-4 flex items-center bg-gray-800 text-white shadow-lg">
-        <button
-          onClick={() => setIsOpen(true)}
-          className="p-2 hover:bg-gray-700 rounded-lg transition-colors"
-          aria-label="Open menu"
-        >
-          <Menu size={24} />
-        </button>
-        <h1 className="ml-4 text-xl font-semibold">
-          <Link to="/" className="flex items-center gap-3 no-underline group">
-            <img
-              src="/allflights_logo.png"
-              alt="Allflights Logo"
-              className="h-10 w-10 object-contain transition-transform group-hover:scale-110"
-            />
-            <span className="text-2xl font-black tracking-tighter text-white">
-              ALLFLIGHTS
-            </span>
-          </Link>
-        </h1>
+      <header className="p-4 pr-6 flex items-center justify-between bg-gray-800 text-white shadow-lg relative z-40">
+        <div className="flex items-center">
+          <button
+            onClick={() => setIsOpen(true)}
+            className="p-2 hover:bg-gray-700 rounded-lg transition-colors"
+            aria-label="Open menu"
+          >
+            <Menu size={24} />
+          </button>
+          <h1 className="ml-4 text-xl font-semibold">
+            <Link to="/" className="flex items-center gap-3 no-underline group">
+              <img
+                src="/allflights_logo.png"
+                alt="Allflights Logo"
+                className="h-10 w-10 object-contain transition-transform group-hover:scale-110"
+              />
+              <span className="text-2xl font-black tracking-tighter text-white">
+                ALLFLIGHTS
+              </span>
+            </Link>
+          </h1>
+        </div>
+
+        <div className="relative">
+          <button
+            onClick={() => setProfileOpen(!profileOpen)}
+            className="flex items-center gap-1.5 p-1 hover:bg-gray-700 rounded-full transition-colors group"
+          >
+            <div className="w-10 h-10 rounded-full border-2 border-slate-700 overflow-hidden ring-2 ring-transparent group-hover:ring-cyan-500/30 transition-all">
+              <img
+                src="https://i.pravatar.cc/150?u=current-user"
+                alt="Profile"
+                className="w-full h-full object-cover"
+              />
+            </div>
+            <ChevronDown size={14} className={`text-slate-400 transition-transform ${profileOpen ? 'rotate-180' : ''}`} />
+          </button>
+
+          {profileOpen && (
+            <div className="absolute right-0 mt-2 w-48 bg-gray-900 border border-slate-800 rounded-2xl shadow-2xl py-2 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
+              <Link
+                to="/profile"
+                onClick={() => setProfileOpen(false)}
+                className="flex items-center gap-3 px-4 py-3 text-sm font-medium hover:bg-slate-800 transition-colors"
+              >
+                <div className="w-8 h-8 rounded-full bg-cyan-500/10 flex items-center justify-center text-cyan-400">
+                  <Home size={16} />
+                </div>
+                My Profile
+              </Link>
+              <div className="h-px bg-slate-800 my-1 mx-4" />
+              <button
+                className="w-full flex items-center gap-3 px-4 py-3 text-sm font-medium text-rose-400 hover:bg-rose-500/10 transition-colors"
+              >
+                <div className="w-8 h-8 rounded-full bg-rose-500/10 flex items-center justify-center">
+                  <X size={16} />
+                </div>
+                Logout
+              </button>
+            </div>
+          )}
+        </div>
       </header>
 
       <aside
