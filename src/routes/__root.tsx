@@ -2,6 +2,9 @@ import { HeadContent, Scripts, createRootRoute } from '@tanstack/react-router'
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 import { TanStackDevtools } from '@tanstack/react-devtools'
 import Header from '../components/Header'
+import { supabase } from '../lib/supabase'
+import { useEffect } from 'react'
+import { useNavigate } from '@tanstack/react-router'
 import appCss from '../styles.css?url'
 
 export const Route = createRootRoute({
@@ -31,6 +34,17 @@ export const Route = createRootRoute({
 })
 
 function RootDocument({ children }: { children: React.ReactNode }) {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    supabase.auth.onAuthStateChange((event, session) => {
+      console.log('Root Auth Event:', event, session ? 'Session found' : 'No session');
+      if (session && (window.location.pathname === '/' || window.location.pathname === '/login')) {
+        navigate({ to: '/dashboard' });
+      }
+    });
+  }, [navigate]);
+
   return (
     <html lang="en">
       <head>

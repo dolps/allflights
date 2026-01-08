@@ -6,12 +6,10 @@ import { SailplaneIcon } from '@/svg/SailplaneIcon'
 import { SpeedridingIcon } from '@/svg/SpeedridingIcon'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import {
-  Route as RouteIcon,
-  Shield,
-  Waves,
-  Sparkles,
 } from 'lucide-react'
 import ReactCountryFlag from "react-country-flag";
+
+import { useEffect } from 'react'
 
 export const Route = createFileRoute('/')({ component: App })
 
@@ -66,6 +64,9 @@ function App() {
   const handleGithubLogin = async () => {
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: 'github',
+      options: {
+        redirectTo: `${window.location.origin}/dashboard`,
+      },
     });
 
     if (error) {
@@ -78,8 +79,6 @@ function App() {
       window.location.href = data.url;
     }
   };
-
-
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900">
