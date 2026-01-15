@@ -1,3 +1,4 @@
+import React from 'react'
 import { HeadContent, Scripts, createRootRoute } from '@tanstack/react-router'
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 import { TanStackDevtools } from '@tanstack/react-devtools'
@@ -29,7 +30,8 @@ export const Route = createRootRoute({
     ],
   }),
 
-  shellComponent: RootDocument
+  shellComponent: RootDocument,
+  notFoundComponent: () => <div>404 - Not Found</div>,
 
 })
 
