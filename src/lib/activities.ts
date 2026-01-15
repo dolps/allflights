@@ -16,7 +16,7 @@ export const parseGPX = (xmlString: string): ActivityStats => {
     gpx.parse(xmlString);
 
     const track = gpx.tracks[0];
-    const points = track.points.map(p => ({
+    const points = track.points.map((p: any) => ({
         lat: p.lat,
         lng: p.lon,
         alt: p.ele || 0,
@@ -24,7 +24,7 @@ export const parseGPX = (xmlString: string): ActivityStats => {
     }));
 
     // Calculate max altitude
-    const maxAltitude = Math.max(...points.map(p => p.alt));
+    const maxAltitude = Math.max(...points.map((p: any) => p.alt));
 
     // Get times
     const startTime = new Date(points[0]?.time || Date.now());
