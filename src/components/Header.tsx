@@ -6,6 +6,7 @@ import {
   ChevronRight,
   Home,
   LayoutDashboard,
+  LogOut,
   Menu,
   Network,
   SquareFunction,
@@ -13,6 +14,7 @@ import {
   User,
   X,
 } from 'lucide-react'
+import { useRef } from 'react'
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false)
@@ -22,24 +24,61 @@ export default function Header() {
   const [groupedExpanded, setGroupedExpanded] = useState<
     Record<string, boolean>
   >({})
+  const profileMenuRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
+    console.log('Header: Checking initial session...')
     supabase.auth.getSession().then(({ data: { session } }) => {
+      console.log('Header: Session check result:', session ? 'User logged in' : 'No session')
       setUser(session?.user ?? null)
     })
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      console.log('Header: Auth state changed:', event, session ? 'User found' : 'No session')
       setUser(session?.user ?? null)
     })
 
-    return () => subscription.unsubscribe()
+    // Click outside listener for profile menu
+    const handleClickOutside = (event: MouseEvent) => {
+      if (profileMenuRef.current && !profileMenuRef.current.contains(event.target as Node)) {
+        setProfileOpen(false)
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+
+    return () => {
+      subscription.unsubscribe()
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
   }, [])
 
   const handleLogout = async () => {
     await supabase.auth.signOut()
     setProfileOpen(false)
+    setUser(null)
     navigate({ to: '/', replace: true })
   }
+
+  const handleGithubLogin = async () => {
+    console.log('Header: Initiating GitHub Login...')
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: 'github',
+      options: {
+        redirectTo: `${window.location.origin}/dashboard`,
+      },
+    });
+
+    if (error) {
+      console.error('Header: GitHub login error:', error.message);
+      return;
+    }
+
+    console.log('Header: Redirecting to GitHub...', data.url)
+    if (data.url) {
+      window.location.href = data.url;
+    }
+  };
 
   const avatarUrl = user?.user_metadata?.avatar_url || '/alex_stoked.png'
   const fullName = user?.user_metadata?.full_name || 'Pilot'
@@ -71,52 +110,64 @@ export default function Header() {
           </h1>
         </div>
 
-        <div className="relative">
-          <button
-            onClick={() => setProfileOpen(!profileOpen)}
-            className="flex items-center gap-1.5 p-1 hover:bg-gray-700 rounded-full transition-colors group"
-          >
-            <div className="w-10 h-10 rounded-full border-2 border-slate-700 overflow-hidden ring-2 ring-transparent group-hover:ring-cyan-500/30 transition-all">
-              <img
-                src={avatarUrl}
-                alt="Profile"
-                className="w-full h-full object-cover"
-              />
-            </div>
-            <ChevronDown size={14} className={`text-slate-400 transition-transform ${profileOpen ? 'rotate-180' : ''}`} />
-          </button>
-
-          {profileOpen && (
-            <div className="absolute right-0 mt-2 w-48 bg-gray-900 border border-slate-800 rounded-2xl shadow-2xl py-2 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
-              <Link
-                to="/profile"
-                onClick={() => setProfileOpen(false)}
-                className="flex items-center gap-3 px-4 py-3 text-sm font-medium hover:bg-slate-800 transition-colors"
-              >
-                <div className="w-8 h-8 rounded-full bg-cyan-500/10 flex items-center justify-center text-cyan-400">
-                  <User size={16} />
-                </div>
-                <div className="flex flex-col">
-                  <span className="text-white truncate max-w-[120px] font-bold">{displayName}</span>
-                  {githubHandle && (
-                    <span className="text-[10px] text-cyan-400 font-mono">@{githubHandle}</span>
-                  )}
-                  <span className="text-[10px] text-slate-500 mt-1 flex items-center gap-1">
-                    View Profile <ChevronRight size={10} />
-                  </span>
-                </div>
-              </Link>
-              <div className="h-px bg-slate-800 my-1 mx-4" />
+        <div className="relative" ref={profileMenuRef}>
+          {user ? (
+            <>
               <button
-                onClick={handleLogout}
-                className="w-full flex items-center gap-3 px-4 py-3 text-sm font-medium text-rose-400 hover:bg-rose-500/10 transition-colors"
+                onClick={() => setProfileOpen(!profileOpen)}
+                className="flex items-center gap-1.5 p-1 hover:bg-gray-700 rounded-full transition-colors group"
+                aria-expanded={profileOpen}
+                aria-haspopup="true"
               >
-                <div className="w-8 h-8 rounded-full bg-rose-500/10 flex items-center justify-center">
-                  <X size={16} />
+                <div className="w-10 h-10 rounded-full border-2 border-slate-700 overflow-hidden ring-2 ring-transparent group-hover:ring-cyan-500/30 transition-all">
+                  <img
+                    src={avatarUrl}
+                    alt="Profile"
+                    className="w-full h-full object-cover"
+                  />
                 </div>
-                Logout
+                <ChevronDown size={14} className={`text-slate-400 transition-transform ${profileOpen ? 'rotate-180' : ''}`} />
               </button>
-            </div>
+              {profileOpen && (
+                <div className="absolute right-0 mt-2 w-56 bg-gray-900 border border-slate-800 rounded-2xl shadow-2xl py-2 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200 z-50">
+                  <Link
+                    to="/profile"
+                    onClick={() => setProfileOpen(false)}
+                    className="flex items-center gap-3 px-4 py-3 text-sm font-medium hover:bg-slate-800 transition-colors"
+                  >
+                    <div className="w-8 h-8 rounded-full bg-cyan-500/10 flex items-center justify-center text-cyan-400">
+                      <User size={16} />
+                    </div>
+                    <div className="flex flex-col">
+                      <span className="text-white truncate max-w-[140px] font-bold">{displayName}</span>
+                      {githubHandle && (
+                        <span className="text-[10px] text-cyan-400 font-mono">@{githubHandle}</span>
+                      )}
+                      <span className="text-[10px] text-slate-500 mt-1 flex items-center gap-1">
+                        View Profile <ChevronRight size={10} />
+                      </span>
+                    </div>
+                  </Link>
+                  <div className="h-px bg-slate-800 my-1 mx-4" />
+                  <button
+                    onClick={handleLogout}
+                    className="w-full flex items-center gap-3 px-4 py-3 text-sm font-medium text-rose-400 hover:bg-rose-500/10 transition-colors text-left"
+                  >
+                    <div className="w-8 h-8 rounded-full bg-rose-500/10 flex items-center justify-center">
+                      <LogOut size={16} />
+                    </div>
+                    Logout
+                  </button>
+                </div>
+              )}
+            </>
+          ) : (
+            <button
+              onClick={handleGithubLogin}
+              className="px-5 py-2 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white text-sm font-bold rounded-xl transition-all shadow-lg shadow-cyan-500/20 active:scale-95"
+            >
+              Sign In
+            </button>
           )}
         </div>
       </header>

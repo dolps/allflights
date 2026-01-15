@@ -1,10 +1,18 @@
-import { createFileRoute, Link } from '@tanstack/react-router'
+import { createFileRoute, Link, redirect } from '@tanstack/react-router'
 import { Activity, Clock, MapPin, Wind, TrendingUp, Users, Trophy, Award, Timer, Mountain, Zap } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import { UploadModal } from '../components/UploadModal'
 import { supabase } from '../lib/supabase'
 
 export const Route = createFileRoute('/dashboard')({
+  beforeLoad: async () => {
+    const { data: { session } } = await supabase.auth.getSession()
+    if (!session) {
+      throw redirect({
+        to: '/',
+      })
+    }
+  },
   component: Dashboard,
 })
 
@@ -61,6 +69,8 @@ function Dashboard() {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null)
     })
+
+    console.log('user:: ', JSON.stringify(user))
   }, [])
 
   const avatarUrl = user?.user_metadata?.avatar_url || '/alex_stoked.png'

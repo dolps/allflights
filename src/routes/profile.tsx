@@ -1,9 +1,17 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, redirect } from '@tanstack/react-router'
 import { Award, Clock, Calendar, TrendingUp, MapPin, Wind, Settings, ArrowRight, Github } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { useEffect, useState } from 'react'
 
 export const Route = createFileRoute('/profile')({
+    beforeLoad: async () => {
+        const { data: { session } } = await supabase.auth.getSession()
+        if (!session) {
+            throw redirect({
+                to: '/',
+            })
+        }
+    },
     component: Profile,
 })
 

@@ -6,7 +6,7 @@ import { SailplaneIcon } from '../svg/SailplaneIcon'
 import { SpeedridingIcon } from '../svg/SpeedridingIcon'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { useEffect, useState } from 'react'
-import ReactCountryFlag from "react-country-flag";
+import { ReactCountryFlag } from "react-country-flag";
 
 export const Route = createFileRoute('/')({ component: App })
 
@@ -59,7 +59,9 @@ function App() {
   const [user, setUser] = useState<any>(null)
 
   useEffect(() => {
+    console.log('Index: Homepage mounting...');
     supabase.auth.getSession().then(({ data: { session } }) => {
+      console.log('Index: Session check:', session ? 'User logged in' : 'No session');
       setUser(session?.user ?? null)
     })
   }, [])
